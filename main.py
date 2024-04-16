@@ -11,6 +11,7 @@ import cobot_R2
 
 import time
 
+cap = cv2.VideoCapture(0)
 
 class MyApp(QWidget):
     def __init__(self):
@@ -124,9 +125,13 @@ class MyApp(QWidget):
 
 
 
-    def run(self, image_path,is_scaled=False):
+    def run(self, cap, is_scaled=False):
 
-        image = cv2.imread(image_path)
+        _, frame = cap.read()
+    
+        image = frame[ 315:400, 417:530]
+
+        # image = cv2.imread(image_path)
         desired_width = 50
 
         # Calculate the aspect ratio
@@ -236,7 +241,7 @@ class MyApp(QWidget):
         capture_image_pos = [] 
         home_pos = [500.00,0.00,250.00,90.00,0.00,90.00]
         pos_place = [674.54,547.68,54.96,176.93,89.93,-94.08]
-        pick_pos = [720,329,55,90,-0,92]
+        
         campos = [680.00,-30.00,305.00,89.99,0.01,0.00]
         campos_180 = [-191.81,-24.64,-52.87,-12.50,-89.99,102.00]
         put_pos = [680.00,-70.00,55.00,90.00,-0.01,0.00]
@@ -267,7 +272,8 @@ class MyApp(QWidget):
         # move to cature image position
         MyApp.move_Linear(self, capture_image_pos)
         time.sleep(3)
-
+        angle, center = MyApp.run(self, cap, is_scaled = True )
+        pick_pos = [center[0],center[1],55,90,angle]
         #ManualScript("wait(JRT_JEGB > 36 out)")
         MyApp.move_Linear(self,pick_pos, dz = 50)
         time.sleep(1)
